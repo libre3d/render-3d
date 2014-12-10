@@ -1,0 +1,25 @@
+{
+	"name": "libre3d/render-3d",
+	"type": "library",
+	"description": "Wrapper library to help render preview images for common 3D file formats.",
+	"keywords": ["render", "stl", "scad"],
+	"homepage": "http://github.com/libre3d/render-3d",
+	"license": "LGPL",
+	"authors": [
+		{
+			"name": "Jonathan Foote",
+			"email": "jf@jonathanfoote.com",
+			"homepage": "http://jonathanfoote.com",
+			"role": "Developer"
+		}
+	],
+	"require": {
+		"php": ">=5.4.0",
+		"ext-gd": "*"
+	},
+	"autoload": {
+		"psr-4": {
+			"Libre3d\\Render3d": "src"
+		}
+	}
+}
