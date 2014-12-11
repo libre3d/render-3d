@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpunit backupGlobals="false"
+		 bootstrap="./test/bootstrap.php"
+		 backupStaticAttributes="false"
+		 convertErrorsToExceptions="true"
+		 convertNoticesToExceptions="true"
+		 convertWarningsToExceptions="true"
+		 processIsolation="false"
+		 stopOnFailure="false"
+		 syntaxCheck="true"
+		 strict="true"
+		 colors="true">
+	<testsuites>
+		<testsuite name="Render3d">
+			<directory>./tests/</directory>
+		</testsuite>
+	</testsuites>
+</phpunit>
