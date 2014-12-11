@@ -41,15 +41,18 @@ class Render3d {
 
 	public function filename($filename = null) {
 		if (!empty($filename)) {
-			if (empty($this->workingDir)) {
-				throw new Exception('Working Directory must be set before file is set.');
-			}
 			$pathInfo = pathinfo($filename);
-			if (!empty($pathinfo['dirname']) && $pathinfo['dirname'] !== '.' && file_exists($filename)) {
+			if (!empty($pathInfo['dirname']) && $pathInfo['dirname'] !== '.' && $this->fileExists($filename)) {
+				if (empty($this->workingDir)) {
+					// Set the working dir based on the file path
+					// TODO: Error
+					throw new \Exception('Working directory required.');
+				}
 				// Copy it into the working folder
-				$copyResult = copy($filename, $this->workingDir . $pathInfo['basename']);
+				$copyResult = $this->copy($filename, $this->workingDir . $pathInfo['basename']);
 				if (!$copyResult) {
 					// TODO: Error
+					throw new \Exception('Copying file to working directory failed.');
 				}
 			}
 			// NOTE: Filename will be minus the extension
@@ -85,7 +88,7 @@ class Render3d {
 	}
 
 	/**
-	 * Mockable method that wraps PHP's mkdir, used to make testing easy.
+	 * Mockable method that wraps PHP's mkdir(), used for testing.
 	 * 
 	 * @param string $pathname
 	 * @param int $mode
@@ -94,5 +97,26 @@ class Render3d {
 	 */
 	protected function mkdir($pathname, $mode = 0777, $recursive = false) {
 		return mkdir($pathname, $mode, $recursive);
+	}
+
+	/**
+	 * Mockable method that wraps PHP's copy(), used for testing.
+	 * 
+	 * @param string $from 
+	 * @param string $to 
+	 * @return boolean
+	 */
+	protected function copy($from, $to) {
+		return copy($from, $to);
+	}
+
+	/**
+	 * Mockable method that wraps PHP's file_exists(), used for testing.
+	 * 
+	 * @param string filename 
+	 * @return boolean
+	 */
+	protected function fileExists($filename) {
+		return file_exists($filename);
 	}
 }
