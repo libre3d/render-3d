@@ -62,14 +62,38 @@ class Render3dTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testFile() {
-		// TODO: finish
+		// Without seeing anything, file should be empty
+		$this->assertEmpty($this->render3d->file());
+		$this->assertEquals('file1', $this->render3d->file('file1'));
+		// make sure it retains value
+		$this->assertEquals('file1', $this->render3d->file());
+
+		$this->render3d->file('file2');
+
+		$this->assertEquals('file2', $this->render3d->file());
 	}
 
 	public function testFileType() {
-		// TODO: finish
+		// Without seeing anything, it should be empty
+		$this->assertEmpty($this->render3d->fileType());
+		$this->assertEquals('ext1', $this->render3d->fileType('ext1'));
+		// make sure it retains value
+		$this->assertEquals('ext1', $this->render3d->fileType());
+
+		$this->render3d->fileType('ext2');
+
+		$this->assertEquals('ext2', $this->render3d->fileType());
 	}
 
 	public function testDirMask() {
-		
+		// Without seeing anything, it should be empty
+		$this->assertEquals(0755, $this->render3d->dirMask());
+		$this->assertEquals(0765, $this->render3d->dirMask(0765));
+		// make sure it retains value
+		$this->assertEquals(0765, $this->render3d->dirMask());
+
+		$this->render3d->dirMask(0111);
+
+		$this->assertEquals(0111, $this->render3d->dirMask());
 	}
 }
