@@ -78,7 +78,7 @@ class Render3d {
 
 	public function dirMask($dirMask = null) {
 		if (!empty($dirMask)) {
-			$this->dirMask = $dirMask;
+			$this->dirMask = (int)$dirMask;
 		}
 		return $this->dirMask;
 	}
