@@ -2,6 +2,8 @@
 
 namespace Libre3d\Test\Render3d;
 
+use Libre3d\Render3d\Render3d;
+
 class Render3dTest extends \PHPUnit_Framework_TestCase {
 	/**
 	 * Render3d object
@@ -95,5 +97,34 @@ class Render3dTest extends \PHPUnit_Framework_TestCase {
 		$this->render3d->dirMask(0111);
 
 		$this->assertEquals(0111, $this->render3d->dirMask());
+	}
+
+	public function testExecutable() {
+		// Without seeing anything, it should return command
+		$this->assertEquals('exe1', $this->render3d->executable('exe1'));
+		$this->assertEquals('/bin/exe1', $this->render3d->executable('exe1', '/bin/exe1'));
+		// make sure it retains value
+		$this->assertEquals('/bin/exe1', $this->render3d->executable('exe1'));
+
+		$this->render3d->executable('exe2', '/usr/bin/exe2');
+
+		$this->assertEquals('/usr/bin/exe2', $this->render3d->executable('exe2'));
+	}
+
+	/**
+	 * TODO: INCOMPLETE
+	 * 
+	 * @return void
+	 */
+	public function _testConvertTo() {
+		$stl = 'http://libre3d.com/user_images/stl_files/RGrady/Fairlead.stl';
+
+		$render = new Render3d();
+
+		$render->workingDir('/tmp/3dTest/');
+		$render->filename($stl);
+
+		$render->convertTo('pov', true);
+
 	}
 }
