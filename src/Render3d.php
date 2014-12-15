@@ -3,8 +3,6 @@
 namespace Libre3d\Render3d;
 
 class Render3d {
-	use FileOperations;
-
 	protected $renderers;
 
 	/**
@@ -82,7 +80,9 @@ class Render3d {
 	public function workingDir ($workingDir = null) {
 		if (!empty($workingDir)) {
 			$this->workingDir = rtrim($workingDir, '/').'/';
-			$this->mkdir($this->workingDir, $this->dirMask, true);
+			if (!file_exists($this->workingDir)) {
+				mkdir($this->workingDir, $this->dirMask, true);
+			}
 		}
 		return $this->workingDir;
 	}
@@ -104,14 +104,14 @@ class Render3d {
 	public function filename($filename = null) {
 		if (!empty($filename)) {
 			$pathInfo = pathinfo($filename);
-			if (!empty($pathInfo['dirname']) && $pathInfo['dirname'] !== '.' && $this->fileExists($filename)) {
+			if (!empty($pathInfo['dirname']) && $pathInfo['dirname'] !== '.' && file_exists($filename)) {
 				if (empty($this->workingDir)) {
 					// Set the working dir based on the file path
 					// TODO: Error
 					throw new \Exception('Working directory required.');
 				}
 				// Copy it into the working folder
-				$copyResult = $this->copy($filename, $this->workingDir . $pathInfo['basename']);
+				$copyResult = copy($filename, $this->workingDir . $pathInfo['basename']);
 				if (!$copyResult) {
 					// TODO: Error
 					throw new \Exception('Copying file to working directory failed.');
@@ -198,8 +198,17 @@ class Render3d {
 			// TODO: exception
 			return false;
 		}
+		$currentDir = getcwd();
+		
+		//we need to be in base directory for all the rendering stuff to work...
+		chdir($this->workingDir);
+
 		$converter = $this->getConverter($this->fileType, $fileType);
-		return $converter->convert($singleStep);
+		$result = $converter->convert($singleStep);
+		
+		// Now go back to the starting dir
+		chdir($currentDir);
+		return $result;
 	}
 
 	/**

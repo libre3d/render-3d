@@ -27,17 +27,10 @@ class Step1Inc extends ConvertAbstract {
 		$stl2pov = $this->Render3d->executable('stl2pov');
 		$file = $this->Render3d->file();
 		
-		$currentDir = getcwd();
-		
-		//we need to be in base directory for all the rendering stuff to work...
-		chdir($this->Render3d->workingDir());
-		
 		// NOTE: older version syntax.
 		$cmd = "{$stl2pov} -s \"{$file}.stl\" > \"{$file}.pov-inc\"";
 		
 		$this->Render3d->cmd($cmd);
-		//go back to normal folder
-		chdir ($currentDir);
 
 		$filename = $this->Render3d->workingDir().$file.'.pov-inc';
 		

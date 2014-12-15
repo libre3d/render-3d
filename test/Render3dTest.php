@@ -2,7 +2,8 @@
 
 namespace Libre3d\Test\Render3d;
 
-use \Libre3d\Render3d\Render3d;
+use \Libre3d\Render3d\Render3d,
+	\org\bovigo\vfs\vfsStream;
 
 class Render3dTest extends \PHPUnit_Framework_TestCase {
 	/**
@@ -10,29 +11,31 @@ class Render3dTest extends \PHPUnit_Framework_TestCase {
 	 * 
 	 * @var \Libre3d\Render3d\Render3d
 	 */
-	public $render3d;
+	protected $render3d;
+
+	/**
+     * root directory
+     *
+     * @type \org\bovigo\vsf\vfsStreamDirectory
+     */
+	protected $root;
 
 	public function setUp() {
-		$this->render3d = $this->getMock('\Libre3d\Render3d\Render3d', ['mkdir', 'copy', 'fileExists']);
+		$this->root = vfsStream::setup();
+
+		$this->render3d = new Render3d();
 
 		parent::setUp();
 	}
 
 	public function testWorkingDir() {
-		$dir = '/tmp/testDir/';
-		$mode = 0755;
+		$this->assertFalse($this->root->hasChild('working'));
 
-		// It should call mkdir
-		$this->render3d->expects($this->once())
-			->method('mkdir')
-			->with($dir, $mode, true)
-			->will($this->returnValue(true));
+		$this->render3d->workingDir(vfsStream::url('root/working/'));
 
-		$workingDir = $this->render3d->workingDir($dir);
-
-		$this->assertEquals($dir, $workingDir);
+		$this->assertTrue($this->root->hasChild('working'));
 		// Make sure it is retained
-		$this->assertEquals($dir, $this->render3d->workingDir());
+		$this->assertEquals(vfsStream::url('root/working/'), $this->render3d->workingDir());
 	}
 
 	public function testFilename() {
@@ -44,20 +47,22 @@ class Render3dTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('filename', $this->render3d->file());
 		$this->assertEquals('ext', $this->render3d->fileType());
 
-		// Test absolute filename
-		// It should call copy
-		$this->render3d->expects($this->once())
-			->method('copy')
-			->with('/path/another_file.ext', $workingDir.'another_file.ext')
-			->will($this->returnValue(true));
-		
-		// Make file_exists return true
-		$this->render3d->expects($this->once())
-			->method('fileExists')
-			->will($this->returnValue(true));
+		// Set up an existing file
+		vfsStream::create([
+			'path' => ['another_file.ext' => 'contents']
+		], $this->root);
 
-		$this->render3d->workingDir($workingDir);
-		$filename = $this->render3d->filename('/path/another_file.ext');
+		$this->render3d->workingDir(vfsStream::url('root/working/'));
+
+		$this->assertFileNotExists(vfsStream::url('root/working/another_file.ext'));
+
+		$filename = $this->render3d->filename(vfsStream::url('root/path/another_file.ext'));
+
+		// Make sure it "copied" the file
+		$this->assertFileExists(vfsStream::url('root/working/another_file.ext'));
+		$this->assertFileEquals(vfsStream::url('root/path/another_file.ext'), vfsStream::url('root/working/another_file.ext'));
+
+		// Make sure params got set correctly
 		$this->assertEquals('another_file.ext', $filename);
 		$this->assertEquals('another_file', $this->render3d->file());
 		$this->assertEquals('ext', $this->render3d->fileType());
@@ -111,11 +116,6 @@ class Render3dTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('/usr/bin/exe2', $this->render3d->executable('exe2'));
 	}
 
-	/**
-	 * TODO: INCOMPLETE
-	 * 
-	 * @return void
-	 */
 	public function testConvertTo() {
 		$converter = $this->getMock('\Libre3d\Convert\ConvertAbstract', ['convert']);
 
