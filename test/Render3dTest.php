@@ -116,17 +116,18 @@ class Render3dTest extends \PHPUnit_Framework_TestCase {
 	 * 
 	 * @return void
 	 */
-	public function _testConvertTo() {
-		$stl = '/home/vagrant/shared/Fairlead.stl';
+	public function testConvertTo() {
+		$converter = $this->getMock('\Libre3d\Convert\ConvertAbstract', ['convert']);
 
-		$render = new Render3d();
+		$converter->expects($this->once())
+			->method('convert')
+			->with(false);
 
-		$render->workingDir('/tmp/3dTest/');
-		$render->filename($stl);
-		// TODO: Just double check that stl2pov is called
-		$render->executable('stl2pov', '/home/vagrant/shared/libre3d/src/render/stl2pov');
+		$this->render3d->registerConverter($converter, 'from-type', 'to-type');
 
-		$render->convertTo('pov', true);
+		$this->render3d->fileType('from-type');
+		$this->render3d->workingDir('/tmp/testDir/');
 
+		$this->render3d->convertTo('to-type');
 	}
 }
