@@ -12,7 +12,7 @@ class Step2Pov extends ConvertAbstract {
 	 */
 	protected $silent = false;
 
-	public function convert($singleStep) {
+	public function convert($singleStep = false) {
 		// TODO: incomplete
 		
 	}

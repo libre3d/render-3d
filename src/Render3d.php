@@ -3,6 +3,8 @@
 namespace Libre3d\Render3d;
 
 class Render3d {
+	use FileOperations;
+
 	protected $renderers;
 
 	/**
@@ -252,47 +254,9 @@ class Render3d {
 		$errContents = trim(file_get_contents("{$this->workingDir}last_error.txt"));
 		if (strlen($errContents)) {
 			//print it red so it's noticed
+			// @TODO: don't echo, possibly add to messages or something
 			echo "<span style='color: red;'>$errContents</span>\n";
 		}
 		return $result;
-	}
-
-	/**
-	 * Mockable method that wraps PHP's mkdir(), used for testing.
-	 * 
-	 * @param string $pathname
-	 * @param int $mode
-	 * @param boolean $recursive
-	 * @return boolean
-	 */
-	protected function mkdir($pathname, $mode = 0777, $recursive = false) {
-		if (!file_exists($pathname)) {
-			return mkdir($pathname, $mode, $recursive);
-		}
-		if (!is_dir($pathname)) {
-			// File exists but is not a directory
-			return false;
-		}
-	}
-
-	/**
-	 * Mockable method that wraps PHP's copy(), used for testing.
-	 * 
-	 * @param string $from 
-	 * @param string $to 
-	 * @return boolean
-	 */
-	protected function copy($from, $to) {
-		return copy($from, $to);
-	}
-
-	/**
-	 * Mockable method that wraps PHP's file_exists(), used for testing.
-	 * 
-	 * @param string filename 
-	 * @return boolean
-	 */
-	protected function fileExists($filename) {
-		return file_exists($filename);
 	}
 }

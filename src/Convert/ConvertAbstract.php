@@ -18,7 +18,7 @@ abstract class ConvertAbstract {
 	 * @param Libre3d\Render3d\Render3d $render3d 
 	 * @return void
 	 */
-	public function __construct(Libre3d\Render3d\Render3d $render3d) {
+	public function __construct(\Libre3d\Render3d\Render3d $render3d) {
 		$this->Render3d = $render3d;
 	}
 
@@ -33,5 +33,5 @@ abstract class ConvertAbstract {
 	 * @param bool $singleStep If true, only process a single step
 	 * @return void
 	 */
-	abstract public function convert($singleStep);
+	abstract public function convert($singleStep = false);
 }

@@ -12,7 +12,7 @@ class Step1Inc extends ConvertAbstract {
 	 */
 	protected $silent = false;
 
-	public function convert($singleStep) {
+	public function convert($singleStep = false) {
 		if ($this->Render3d->fileType() !== 'stl') {
 			// TODO: Throw exception?
 			return;

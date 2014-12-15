@@ -2,7 +2,7 @@
 
 namespace Libre3d\Test\Render3d;
 
-use Libre3d\Render3d\Render3d;
+use \Libre3d\Render3d\Render3d;
 
 class Render3dTest extends \PHPUnit_Framework_TestCase {
 	/**
@@ -117,12 +117,14 @@ class Render3dTest extends \PHPUnit_Framework_TestCase {
 	 * @return void
 	 */
 	public function _testConvertTo() {
-		$stl = 'http://libre3d.com/user_images/stl_files/RGrady/Fairlead.stl';
+		$stl = '/home/vagrant/shared/Fairlead.stl';
 
 		$render = new Render3d();
 
 		$render->workingDir('/tmp/3dTest/');
 		$render->filename($stl);
+		// TODO: Just double check that stl2pov is called
+		$render->executable('stl2pov', '/home/vagrant/shared/libre3d/src/render/stl2pov');
 
 		$render->convertTo('pov', true);
 

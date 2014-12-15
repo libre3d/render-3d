@@ -6,7 +6,7 @@ use Libre3d\Render3d\Render3d;
 
 class StlPov extends ConvertAbstract {
 	
-	public function convert($singleStep) {
+	public function convert($singleStep = false) {
 		if ($this->Render3d->fileType() === 'pov') {
 			// already at the desired type, nothing more to do!
 			return;
