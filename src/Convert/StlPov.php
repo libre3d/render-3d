@@ -28,14 +28,34 @@ class StlPov extends ConvertAbstract {
 		// Initialize steps based on file type
 		switch ($this->Render3d->fileType()) {
 			case 'stl':
-				$steps[] = new StlPovSteps\Step1Inc($this->Render3d);
+				$steps[] = $this->getStep('stl');
 				if ($singleStep) {
 					// Fall through if NOT $singleStep
 					break;
 				}
-			case 'pov.inc':
-				$steps[] = new StlPovSteps\Step2Pov($this->Render3d);
+			case 'pov-inc':
+				$steps[] = $this->getStep('pov-inc');
 		}
-		return $steps;
+		return array_filter($steps);
+	}
+
+	/**
+	 * Seperate out the process of creating a step based on file type so that it is easily mockable for tests.
+	 * 
+	 * @param string $fromType
+	 * @return Libre3d\Render3d\Convert\ConvertAbstract|boolean The step to use, or boolean false if no step found for
+	 *   that type.
+	 */
+	protected function getStep($fromType) {
+		switch($fromType) {
+			case 'stl':
+				return new StlPovSteps\Step1Inc($this->Render3d);
+				break;
+
+			case 'pov-inc':
+				return new StlPovSteps\Step2Pov($this->Render3d);
+				break;
+		}
+		return false;
 	}
 }
