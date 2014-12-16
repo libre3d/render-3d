@@ -13,32 +13,26 @@ class Render3dTest extends \PHPUnit_Framework_TestCase {
 	 */
 	protected $render3d;
 
-	/**
-     * root directory
-     *
-     * @type \org\bovigo\vsf\vfsStreamDirectory
-     */
-	protected $root;
-
 	public function setUp() {
-		$this->root = vfsStream::setup();
-
 		$this->render3d = new Render3d();
 
 		parent::setUp();
 	}
 
 	public function testWorkingDir() {
-		$this->assertFalse($this->root->hasChild('working'));
+		$root = vfsStream::setup();
+
+		$this->assertFalse($root->hasChild('working'));
 
 		$this->render3d->workingDir(vfsStream::url('root/working/'));
 
-		$this->assertTrue($this->root->hasChild('working'));
+		$this->assertTrue($root->hasChild('working'));
 		// Make sure it is retained
 		$this->assertEquals(vfsStream::url('root/working/'), $this->render3d->workingDir());
 	}
 
 	public function testFilename() {
+		$root = vfsStream::setup();
 		$workingDir = '/tmp/testDir/';
 
 		// Test normal filename
@@ -50,7 +44,7 @@ class Render3dTest extends \PHPUnit_Framework_TestCase {
 		// Set up an existing file
 		vfsStream::create([
 			'path' => ['another_file.ext' => 'contents']
-		], $this->root);
+		], $root);
 
 		$this->render3d->workingDir(vfsStream::url('root/working/'));
 
