@@ -30,7 +30,7 @@ camera {
 	//orthographic
 	sky <0,0,1>
 	location <(<?php echo $x; ?>*-2),(<?php echo $y; ?>*-2),(<?php echo $z; ?>*<?php echo $zMult; ?>)>
-	look_at <0,0,({{Z}}*0.45)>
+	look_at <0,0,(<?php echo $z; ?>*0.45)>
 	angle 35
 	right -1.33*x
 }
