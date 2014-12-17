@@ -51,11 +51,11 @@ class Povray extends Render {
 	protected function preConvert () {
 		switch ($this->Render3d->fileType()) {
 			case 'scad':
-				$this->convertTo('stl');
+				$this->Render3d->convertTo('stl');
 				// Break ommited on purpose
 			
 			case 'stl':
-				$this->convertTo('pov');
+				$this->Render3d->convertTo('pov');
 				break;
 		}
 	}
