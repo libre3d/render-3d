@@ -4,7 +4,7 @@ namespace Libre3d\Render3d\Convert;
 
 use Libre3d\Render3d\Render3d;
 
-class ScadStl extends ConvertAbstract {
+class ScadStl extends Convert {
 	
 	public function convert($singleStep = false) {
 		if ($this->Render3d->fileType() !== 'scad') {

@@ -3,9 +3,9 @@
 namespace Libre3d\Render3d\Convert\StlPovSteps;
 
 use Libre3d\Render3d\Render3d,
-	Libre3d\Render3d\Convert\ConvertAbstract;
+	Libre3d\Render3d\Convert\Convert;
 
-class Step2Pov extends ConvertAbstract {
+class Step2Pov extends Convert {
 	/**
 	 * TODO: refactor
 	 * @var boolean

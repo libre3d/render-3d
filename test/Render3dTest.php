@@ -102,7 +102,7 @@ class Render3dTest extends Render3dTestCase {
 	}
 
 	public function testConvertTo() {
-		$converter = $this->getMock('\Libre3d\Convert\ConvertAbstract', ['convert']);
+		$converter = $this->getMock('\Libre3d\Convert\Convert', ['convert']);
 
 		$converter->expects($this->once())
 			->method('convert')

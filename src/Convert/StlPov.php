@@ -4,7 +4,7 @@ namespace Libre3d\Render3d\Convert;
 
 use Libre3d\Render3d\Render3d;
 
-class StlPov extends ConvertAbstract {
+class StlPov extends Convert {
 	
 	public function convert($singleStep = false) {
 		if ($this->Render3d->fileType() === 'pov') {
@@ -43,7 +43,7 @@ class StlPov extends ConvertAbstract {
 	 * Seperate out the process of creating a step based on file type so that it is easily mockable for tests.
 	 * 
 	 * @param string $fromType
-	 * @return Libre3d\Render3d\Convert\ConvertAbstract|boolean The step to use, or boolean false if no step found for
+	 * @return Libre3d\Render3d\Convert\Convert|boolean The step to use, or boolean false if no step found for
 	 *   that type.
 	 */
 	protected function getStep($fromType) {

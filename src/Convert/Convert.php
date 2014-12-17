@@ -5,7 +5,7 @@ namespace Libre3d\Render3d\Convert;
 /**
  * The convert abstract class.  All converters must extend this.
  */
-abstract class ConvertAbstract {
+abstract class Convert {
 	/**
 	 * The Render3d object
 	 * @var Libre3d\Render3d\Render3d

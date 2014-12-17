@@ -15,7 +15,7 @@ class StlPovTest extends Render3dTestCase {
 		$render3d->fileType('stl');
 
 		// Mock up some steps
-		$stl = $this->getMock('\Libre3d\Render3d\Convert\ConvertAbstract', ['convert'], [$render3d]);
+		$stl = $this->getGenericConverter($render3d);
 
 		$stl->expects($this->once())
 			->method('convert');
@@ -38,7 +38,7 @@ class StlPovTest extends Render3dTestCase {
 		$render3d->fileType('pov-inc');
 
 		// Mock up some steps
-		$inc = $this->getMock('\Libre3d\Render3d\Convert\ConvertAbstract', ['convert'], [$render3d]);
+		$inc = $this->getGenericConverter($render3d);
 
 		$inc->expects($this->once())
 			->method('convert');
@@ -61,12 +61,12 @@ class StlPovTest extends Render3dTestCase {
 		$render3d->fileType('stl');
 
 		// Mock up some steps
-		$stl = $this->getMock('\Libre3d\Render3d\Convert\ConvertAbstract', ['convert'], [$render3d]);
+		$stl = $this->getGenericConverter($render3d);
 
 		$stl->expects($this->once())
 			->method('convert');
 
-		$inc = $this->getMock('\Libre3d\Render3d\Convert\ConvertAbstract', ['convert'], [$render3d]);
+		$inc = $this->getGenericConverter($render3d);
 		
 		$inc->expects($this->once())
 			->method('convert');
@@ -84,5 +84,15 @@ class StlPovTest extends Render3dTestCase {
 			->will($this->returnValue($inc));
 
 		$converter->convert(false);
+	}
+
+	/**
+	 * Get a generic converter with convert method mocked out
+	 * 
+	 * @param Libre3d\Render3d\Render3d $render3d
+	 * @return Libre3d\Render3d\Convert\Convert
+	 */
+	protected function getGenericConverter (Render3d $render3d) {
+		return $this->getMock('\Libre3d\Render3d\Convert\Convert', ['convert'], [$render3d]);
 	}
 }
