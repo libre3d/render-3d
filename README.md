@@ -45,12 +45,15 @@ $render3d->executable('stl2pov', '/path/to/stl2pov');
 $render3d->executable('openscad', '/path/to/openscad');
 $render3d->executable('povray', '/path/to/povray');
 
-// Shortcut: this will copy in your starting file into the workind DIR if you give the full path to the starting file.
+// Shortcut: this will copy in your starting file into the working DIR if you give the full path to the starting file.
 // This will also set the fileType for you.
 $render3d->filename('/path/to/starting/stlfile.stl');
 
 // Render!  This is another shortcut, it will do all the necessary conversions as long as the render engine (in this
-// case, the default engine, PovRAY) "knows" how to convert the file into a file it can use for rendering.
+// case, the default engine, PovRAY) "knows" how to convert the file into a file it can use for rendering.  note that
+// if needed, you can do a single step of the process.  For instance, usage on [libre3d.com](http://libre3d.com) only
+// does the first step, converting to pov file "on the fly", then adds to a queue to do the rest of the rendering using
+// a cron job.  This is because some of the steps can take a long time depending on the complexity of the object.
 $renderedImagePath = $render3d->render('povray');
 
 if ($renderedImagePath) {
