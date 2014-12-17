@@ -3,6 +3,11 @@
 namespace Libre3d\Render3d;
 
 class Render3d {
+	/**
+	 * Array of Renderer objects.
+	 * 
+	 * @var arrat
+	 */
 	protected $renderers;
 
 	/**
@@ -233,13 +238,43 @@ class Render3d {
 	}
 
 	/**
-	 * Get converter to convert from the "from" to the "to".
+	 * Render the file and return the full path to the rendered image.
 	 * 
-	 * TODO: update phpdocs
+	 * @param string $engine
+	 * @param array $options
+	 * @return string|boolean Full path to rendered image file, or false if any problems happen.
+	 */
+	public function render ($engine = 'povray', $options = null) {
+		if (empty($this->fileType) || empty($this->workingDir)) {
+			// File type or working dir not set
+			// TODO: exception
+			return false;
+		}
+
+		// Set the options
+		if (!empty($options)) {
+			$this->options($options);
+		}
+
+		$currentDir = getcwd();
+		
+		//we need to be in base directory for all the rendering stuff to work...
+		chdir($this->workingDir);
+
+		$renderer = $this->getRenderer($engine);
+		$result = $renderer->render();
+		
+		// Now go back to the starting dir
+		chdir($currentDir);
+		return $result;
+	}
+
+	/**
+	 * Get converter to convert from the "from" to the "to".
 	 * 
 	 * @param string $fromType
 	 * @param string $toType
-	 * @return Object
+	 * @return libre3d\Render3d\Convert\Convert
 	 */
 	public function getConverter($fromType, $toType) {
 		if (!isset($this->converters[$fromType][$toType])) {
@@ -247,6 +282,20 @@ class Render3d {
 			$this->registerConverter($class, $fromType, $toType);
 		}
 		return $this->converters[$fromType][$toType];
+	}
+
+	/**
+	 * Get renderer object for the given render engine.
+	 * 
+	 * @param string $engine 
+	 * @return Libre3d\Render3d\Render\Render
+	 */
+	public function getRenderer($engine) {
+		if (!isset($this->renderers[$engine])) {
+			$class = 'Libre3d\Render3d\Render\\'.ucfirst($engine);
+			$this->registerRenderer($class, $engine);
+		}
+		return $this->renderers[$engine];
 	}
 
 	/**
@@ -267,8 +316,26 @@ class Render3d {
 			}
 			$class = new $class($this);
 		}
-		// TODO: enforce class extending controller
+		// TODO: enforce class extending convert
 		$this->converters[$fromType][$toType] = $class;
+	}
+
+	/**
+	 * Register a rendering engine.
+	 * 
+	 * @param string|Libre3d\Render3d\Render\Render $class
+	 * @param string $engine
+	 * @return void
+	 */
+	public function registerRenderer($class, $engine) {
+		if (is_string($class)) {
+			if (!class_exists($class)) {
+				// TODO: exception
+			}
+			$class = new $class($this);
+		}
+		// TODO: enforce class extending render
+		$this->renderers[$engine] = $class;
 	}
 
 	/**

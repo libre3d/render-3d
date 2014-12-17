@@ -101,6 +101,20 @@ class Render3dTest extends Render3dTestCase {
 		$this->assertEquals('/usr/bin/exe2', $this->render3d->executable('exe2'));
 	}
 
+	public function testRender() {
+		$render = $this->getMock('\Libre3d\Render\Render', ['render']);
+
+		$render->expects($this->once())
+			->method('render');
+
+		$this->render3d->registerRenderer($render, 'engine');
+
+		$this->render3d->fileType('from-type');
+		$this->render3d->workingDir($this->workingDir);
+
+		$this->render3d->render('engine');
+	}
+
 	public function testConvertTo() {
 		$converter = $this->getMock('\Libre3d\Convert\Convert', ['convert']);
 

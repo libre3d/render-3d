@@ -19,6 +19,13 @@ class Render3dTestCase extends \PHPUnit_Framework_TestCase {
 	 */
 	protected $workingDir;
 
+	/**
+	 * If set to true, will not clean up after itself by removing working dir
+	 * 
+	 * @var boolean
+	 */
+	protected $keepWorkingDir = false;
+
 
 	public function setUp() {
 		$this->workingDir = sys_get_temp_dir() . '/Render3dTests/';
@@ -43,7 +50,7 @@ class Render3dTestCase extends \PHPUnit_Framework_TestCase {
 	 * @return void
 	 */
 	protected function removeWorkingDir () {
-		if ($this->workingDir && file_exists($this->workingDir)) {
+		if (!$this->keepWorkingDir && $this->workingDir && file_exists($this->workingDir)) {
 			array_map('unlink', glob($this->workingDir . '*'));
 			rmdir($this->workingDir);
 		}
