@@ -88,6 +88,17 @@ class Render3d {
 	}
 
 	/**
+	 * Get the directory for the scene directory for the Render3d library.
+	 * 
+	 * This cannot be changed and is set automatically by the library.
+	 * 
+	 * @return string
+	 */
+	public function scheneDir() {
+		return $this->render3dDir . 'Scenes/';
+	}
+
+	/**
 	 * Get and/or set the relative filename of the current file being worked on.
 	 * 
 	 * Once a file has been converted or rendered, this will change to the converted or rendered filename.
