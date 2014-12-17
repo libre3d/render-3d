@@ -124,4 +124,13 @@ class Render3dTest extends \PHPUnit_Framework_TestCase {
 
 		$this->render3d->convertTo('to-type');
 	}
+
+	public function testParams() {
+		$this->assertEmpty($this->render3d->convertParams('CONVERT'));
+		$this->assertEmpty($this->render3d->renderParams('RENDER'));
+
+		$this->render3d->convertParams('CONVERT', ['param1' => 'val1']);
+		$this->assertSame(['param1'=>'val1'], $this->render3d->convertParams('CONVERT'));
+		$this->assertEmpty($this->render3d->convertParams('ANOTHER_CONVERTER'), 'Make sure params do not get shared between converters');
+	}
 }

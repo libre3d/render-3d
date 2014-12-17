@@ -64,6 +64,13 @@ class Render3d {
 	protected $dirMask = 0755;
 
 	/**
+	 * Parameters set and used by converters or renderrers
+	 * 
+	 * @var array
+	 */
+	protected $params = ['convert' => [], 'render' => []];
+
+	/**
 	 * Constructor gonna construct
 	 */
 	public function __construct() {
@@ -278,5 +285,48 @@ class Render3d {
 			echo "<span style='color: red;'>$errContents</span>\n";
 		}
 		return $result;
+	}
+
+	/**
+	 * Get/Set params for the given converter.
+	 * 
+	 * @param string $converter Converter name, like StlPov
+	 * @param array $params If set, will add / replace the parameters
+	 * @return array The parameters for the given converter
+	 */
+	public function convertParams($converter, $params = null) {
+		return $this->params('convert', $converter, $params);
+	}
+
+	/**
+	 * Get/Set params for the given renderer.
+	 * 
+	 * @param string $renderer Renderer name
+	 * @param array $params If set, will add / replace the parameters
+	 * @return array The parameters for the given renderer
+	 */
+	public function renderParams($renderer, $params = null) {
+		return $this->params('render', $renderer, $params);
+	}
+
+	/**
+	 * Get or set the parameters for the "type" (either convert or render) and parent name.
+	 * 
+	 * @param string $type 
+	 * @param string $parent 
+	 * @param array $params 
+	 * @return array
+	 */
+	protected function params($type, $parent, $params) {
+		if (!empty($params) && is_array($params)) {
+			if (!empty($this->params[$type][$parent])) {
+				$params = array_merge($this->params[$type][$parent], $params);
+			}
+			$this->params[$type][$parent] = $params;
+		}
+		if (empty($this->params[$type][$parent])) {
+			return [];
+		}
+		return $this->params[$type][$parent];
 	}
 }
