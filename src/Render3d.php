@@ -94,7 +94,7 @@ class Render3d {
 	 * 
 	 * @return string
 	 */
-	public function scheneDir() {
+	public function sceneDir() {
 		return $this->render3dDir . 'Scenes/';
 	}
 
