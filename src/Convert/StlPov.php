@@ -6,7 +6,10 @@ use Libre3d\Render3d\Render3d;
 
 class StlPov extends Convert {
 	
-	public function convert($singleStep = false) {
+	public function convert() {
+		$options = $this->Render3d->options();
+		$singleStep = !empty($options['SingleStep']) && $options['SingleStep'];
+		
 		if ($this->Render3d->fileType() === 'pov') {
 			// already at the desired type, nothing more to do!
 			return;

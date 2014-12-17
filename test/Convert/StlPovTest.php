@@ -13,6 +13,7 @@ class StlPovTest extends Render3dTestCase {
 		$render3d->workingDir($this->workingDir);
 		$render3d->file('example');
 		$render3d->fileType('stl');
+		$render3d->options(['SingleStep' => true]);
 
 		// Mock up some steps
 		$stl = $this->getGenericConverter($render3d);
@@ -27,7 +28,7 @@ class StlPovTest extends Render3dTestCase {
 			->with('stl')
 			->will($this->returnValue($stl));
 
-		$converter->convert(true);
+		$converter->convert();
 	}
 
 	public function testSecondStep() {
@@ -36,6 +37,7 @@ class StlPovTest extends Render3dTestCase {
 		$render3d->workingDir($this->workingDir);
 		$render3d->file('example');
 		$render3d->fileType('pov-inc');
+		$render3d->options(['SingleStep' => true]);
 
 		// Mock up some steps
 		$inc = $this->getGenericConverter($render3d);
@@ -50,7 +52,7 @@ class StlPovTest extends Render3dTestCase {
 			->with('pov-inc')
 			->will($this->returnValue($inc));
 
-		$converter->convert(true);
+		$converter->convert();
 	}
 
 	public function testAllSteps() {
@@ -83,7 +85,7 @@ class StlPovTest extends Render3dTestCase {
 			->with('pov-inc')
 			->will($this->returnValue($inc));
 
-		$converter->convert(false);
+		$converter->convert();
 	}
 
 	/**

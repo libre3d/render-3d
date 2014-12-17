@@ -30,8 +30,7 @@ abstract class Convert {
 	 * 
 	 * If conversion successful, this method should update the Render3d's fileType to match the new file type.
 	 * 
-	 * @param bool $singleStep If true, only process a single step
 	 * @return void
 	 */
-	abstract public function convert($singleStep = false);
+	abstract public function convert();
 }

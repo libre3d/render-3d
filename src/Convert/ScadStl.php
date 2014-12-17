@@ -6,7 +6,7 @@ use Libre3d\Render3d\Render3d;
 
 class ScadStl extends Convert {
 	
-	public function convert($singleStep = false) {
+	public function convert() {
 		if ($this->Render3d->fileType() !== 'scad') {
 			// Not the right file type to convert
 			return;

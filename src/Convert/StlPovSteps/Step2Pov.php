@@ -16,7 +16,7 @@ class Step2Pov extends Convert {
 
 	protected $max = [];
 
-	public function convert($singleStep = false) {
+	public function convert() {
 		if ($this->Render3d->fileType() !== 'pov-inc') {
 			// TODO: Throw exception?
 			return;
@@ -133,7 +133,7 @@ class Step2Pov extends Convert {
 	 * @return string The POV contents to use
 	 */
 	protected function generatePov($tplVars) {
-		$options = $this->Render3d->convertParams('StlPov');
+		$options = $this->Render3d->options();
 
 		$defaultLayoutFile = $this->Render3d->sceneDir() . 'Pov/layout.php';
 

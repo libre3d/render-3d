@@ -105,8 +105,7 @@ class Render3dTest extends Render3dTestCase {
 		$converter = $this->getMock('\Libre3d\Convert\Convert', ['convert']);
 
 		$converter->expects($this->once())
-			->method('convert')
-			->with(false);
+			->method('convert');
 
 		$this->render3d->registerConverter($converter, 'from-type', 'to-type');
 
@@ -116,12 +115,10 @@ class Render3dTest extends Render3dTestCase {
 		$this->render3d->convertTo('to-type');
 	}
 
-	public function testParams() {
-		$this->assertEmpty($this->render3d->convertParams('CONVERT'));
-		$this->assertEmpty($this->render3d->renderParams('RENDER'));
+	public function testOptions() {
+		$this->assertEmpty($this->render3d->options());
 
-		$this->render3d->convertParams('CONVERT', ['param1' => 'val1']);
-		$this->assertSame(['param1'=>'val1'], $this->render3d->convertParams('CONVERT'));
-		$this->assertEmpty($this->render3d->convertParams('ANOTHER_CONVERTER'), 'Make sure params do not get shared between converters');
+		$this->render3d->options(['param1' => 'val1']);
+		$this->assertSame(['param1'=>'val1'], $this->render3d->options());
 	}
 }

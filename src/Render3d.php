@@ -68,7 +68,7 @@ class Render3d {
 	 * 
 	 * @var array
 	 */
-	protected $params = ['convert' => [], 'render' => []];
+	protected $options = [];
 
 	/**
 	 * Constructor gonna construct
@@ -203,26 +203,29 @@ class Render3d {
 	/**
 	 * Convert from the current file type to the one given.
 	 * 
-	 * The $singleStep parameter allows you to only process a single step of the conversion in instances when
-	 * a conversion requires multiple steps.  (For instance, stl to pov)
-	 * 
 	 * @param string $fileType The "end" file type to convert to.
-	 * @param boolean $singleStep If true, will only do a single step of the conversion.
+	 * @param array $options Array of options for the specific conversion
 	 * @return void
 	 */
-	public function convertTo ($fileType, $singleStep = false) {
+	public function convertTo ($fileType, $options = null) {
 		if (empty($this->fileType) || empty($this->workingDir)) {
 			// File type or working dir not set
 			// TODO: exception
 			return false;
 		}
+
+		// Set the options
+		if (!empty($options)) {
+			$this->options($options);
+		}
+
 		$currentDir = getcwd();
 		
 		//we need to be in base directory for all the rendering stuff to work...
 		chdir($this->workingDir);
 
 		$converter = $this->getConverter($this->fileType, $fileType);
-		$result = $converter->convert($singleStep);
+		$result = $converter->convert();
 		
 		// Now go back to the starting dir
 		chdir($currentDir);
@@ -288,45 +291,18 @@ class Render3d {
 	}
 
 	/**
-	 * Get/Set params for the given converter.
+	 * Get or set the options used by converters or renderers
 	 * 
-	 * @param string $converter Converter name, like StlPov
-	 * @param array $params If set, will add / replace the parameters
-	 * @return array The parameters for the given converter
-	 */
-	public function convertParams($converter, $params = null) {
-		return $this->params('convert', $converter, $params);
-	}
-
-	/**
-	 * Get/Set params for the given renderer.
-	 * 
-	 * @param string $renderer Renderer name
-	 * @param array $params If set, will add / replace the parameters
-	 * @return array The parameters for the given renderer
-	 */
-	public function renderParams($renderer, $params = null) {
-		return $this->params('render', $renderer, $params);
-	}
-
-	/**
-	 * Get or set the parameters for the "type" (either convert or render) and parent name.
-	 * 
-	 * @param string $type 
-	 * @param string $parent 
-	 * @param array $params 
+	 * @param array $options
 	 * @return array
 	 */
-	protected function params($type, $parent, $params) {
-		if (!empty($params) && is_array($params)) {
-			if (!empty($this->params[$type][$parent])) {
-				$params = array_merge($this->params[$type][$parent], $params);
+	public function options($options = null) {
+		if (!empty($options) && is_array($options)) {
+			if (!empty($this->options)) {
+				$options = array_merge($this->options, $options);
 			}
-			$this->params[$type][$parent] = $params;
+			$this->options = $options;
 		}
-		if (empty($this->params[$type][$parent])) {
-			return [];
-		}
-		return $this->params[$type][$parent];
+		return $this->options;
 	}
 }
