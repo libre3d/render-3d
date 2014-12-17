@@ -2,10 +2,9 @@
 
 namespace Libre3d\Test\Render3d;
 
-use \Libre3d\Render3d\Render3d,
-	\org\bovigo\vfs\vfsStream;
+use \Libre3d\Render3d\Render3d;
 
-class Render3dTest extends \PHPUnit_Framework_TestCase {
+class Render3dTest extends Render3dTestCase {
 	/**
 	 * Render3d object
 	 * 
@@ -20,19 +19,16 @@ class Render3dTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testWorkingDir() {
-		$root = vfsStream::setup();
+		$this->assertFalse(file_exists($this->workingDir));
 
-		$this->assertFalse($root->hasChild('working'));
+		$this->render3d->workingDir($this->workingDir);
 
-		$this->render3d->workingDir(vfsStream::url('root/working/'));
-
-		$this->assertTrue($root->hasChild('working'));
+		$this->assertTrue(file_exists($this->workingDir));
 		// Make sure it is retained
-		$this->assertEquals(vfsStream::url('root/working/'), $this->render3d->workingDir());
+		$this->assertEquals($this->workingDir, $this->render3d->workingDir());
 	}
 
 	public function testFilename() {
-		$root = vfsStream::setup();
 		$workingDir = '/tmp/testDir/';
 
 		// Test normal filename
@@ -41,25 +37,20 @@ class Render3dTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('filename', $this->render3d->file());
 		$this->assertEquals('ext', $this->render3d->fileType());
 
-		// Set up an existing file
-		vfsStream::create([
-			'path' => ['another_file.ext' => 'contents']
-		], $root);
+		$this->render3d->workingDir($this->workingDir);
 
-		$this->render3d->workingDir(vfsStream::url('root/working/'));
+		$this->assertFileNotExists($this->workingDir . 'example.scad');
 
-		$this->assertFileNotExists(vfsStream::url('root/working/another_file.ext'));
-
-		$filename = $this->render3d->filename(vfsStream::url('root/path/another_file.ext'));
+		$filename = $this->render3d->filename($this->testFilesDir . 'example.scad');
 
 		// Make sure it "copied" the file
-		$this->assertFileExists(vfsStream::url('root/working/another_file.ext'));
-		$this->assertFileEquals(vfsStream::url('root/path/another_file.ext'), vfsStream::url('root/working/another_file.ext'));
+		$this->assertFileExists($this->workingDir . 'example.scad');
+		$this->assertFileEquals($this->testFilesDir . 'example.scad', $this->workingDir . 'example.scad');
 
 		// Make sure params got set correctly
-		$this->assertEquals('another_file.ext', $filename);
-		$this->assertEquals('another_file', $this->render3d->file());
-		$this->assertEquals('ext', $this->render3d->fileType());
+		$this->assertEquals('example.scad', $filename);
+		$this->assertEquals('example', $this->render3d->file());
+		$this->assertEquals('scad', $this->render3d->fileType());
 	}
 
 	public function testFile() {

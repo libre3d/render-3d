@@ -17,8 +17,7 @@ class Step2Pov extends ConvertAbstract {
 	protected $max = [];
 
 	public function convert($singleStep = false) {
-		// TODO: incomplete
-		if ($this->Render3d->fileType() !== 'stl') {
+		if ($this->Render3d->fileType() !== 'pov-inc') {
 			// TODO: Throw exception?
 			return;
 		}
@@ -57,37 +56,23 @@ class Step2Pov extends ConvertAbstract {
 		$diff['z'] = abs($this->max['z'] - $this->min['z']);
 		
 		//generate contents
-		$pov_contents = file_get_contents($this->file_pov_tpl);
-		if (!strlen($pov_contents)) {
-			chdir ($currentDir);
-			ob_end_clean();
-			return $this->error('Could not get the contents of pov_layout.tmpl');
-		}
-		$find = $replace = array();
-		
+		/**
+		 * The template vars used by our layout template
+		 * 
+		 * @var array
+		 */
+		$tplVars = [];
+
 		//insert the include file...
-		$find[] = '{{INCLUDE_FILE}}';
-		$replace[] = $this->file_inc;
+		$tplVars['includeFile'] = $this->Render3d->workingDir() . $this->Render3d->filename();
 		
-		//the model name
-		$find[] = '{{MODELNAME}}';
-		$replace[] = $modelname;
+		$tplVars['modelname'] = $modelname;
+
+		$tplVars['sceneDir'] = $this->Render3d->sceneDir();
 		
-		//the base folder
-		$find[] = '{{BASE_PATH}}';
-		//NOTE: This is expecting "this folder" not the base temp folder
-		$replace[] = $this->dir_this;//$this->dir_base;
-		
-		
-		//allow us to do some stuff based on x/y/z
-		$find[] = '{{X}}';
-		$replace[] = $diff['x'];
-		$find[] = '{{Y}}';
-		$replace[] = $diff['y'];
-		$find[] = '{{Z}}';
-		$replace[] = $diff['z'];
-		$find[] = '{{MAX}}';
-		$replace[] = max($diff);
+		$tplVars['x'] = $diff['x'];
+		$tplVars['y'] = $diff['y'];
+		$tplVars['z'] = $diff['z'];
 		
 		//figure out what to use for the Z multipliers...
 		
@@ -95,53 +80,73 @@ class Step2Pov extends ConvertAbstract {
 		//default is a little above the top of the item...
 		$mult = '1.2';
 		
-		$slope_threshold = .33;
+		$slopeThreshold = .33;
 		
 		//Figure out the "run" for the slope...  it's basically a triangle...
 		$x = $diff['x']*2;
 		$y = $diff['y']*2;
 		$z = $diff['z']*$mult;
-		//so use pythagerium therum or whatever that this is we all thought we'd never use again
-		//outside of high school
-		//x^2 + y^2 = h^2 ... (x^2 + y^2)^0.5 = h
+		// use pythagorean theorem
+		// x^2 + y^2 = h^2 ... (x^2 + y^2)^0.5 = h
 		$h = sqrt($x*$x + $y*$y);
 		
-		//now use h (hypotenuse) as the run.. and z as the rise...  See if the slope
-		//is less than our threshhold
-		if (($diff['z']*$mult)/$h < $slope_threshold) {
-			//slope is not acceptable!  Figure out what to use a roughly 40% slope or so...
+		// now use h (hypotenuse) as the run.. and z as the rise...  See if the slope is less than our threshhold
+		if (($diff['z']*$mult)/$h < $slopeThreshold) {
+			// slope is not acceptable!  Figure out what to use a roughly 40% slope or so...
 				
-			//(z*mult) / h = .4 (z is "original z" pre-multiplier...) and solve for mult:
+			// (z*mult) / h = .4 (z is "original z" pre-multiplier...) and solve for mult:
 			$mult = ($h * 0.4) / $diff['z'];
 		}
+		$tplVars['zMult'] = round($mult, 2);
 		
-		$find[] = '{{Z_MULT}}';
-		$replace[] = ''.round($mult,2);
+		// figure out things for the grid...
 		
-		//figure out things for the grid...
+		// This is figuring out how large to make the grid, we only want to take up a part of the floor
+		// (the part that the object takes up)
+		$axesSize = 100;
+		$axesMult = ceil( max($diff['x'],$diff['y']) / ($axesSize));
 		
-		//This is figuring out how large to make the grid, we only want to take up a part of the floor
-		//(the part that the object takes up)
-		$Axes_axesSize = 100;
-		$axes_mult = ceil(max($diff['x'],$diff['y']) / ($Axes_axesSize));
+		$tplVars['axesSize'] = $axesSize * $axesMult;
 		
-		$Axes_axesSize *= $axes_mult;
-		
-		$find[] = '{{Axes_axesSize}}';//100;
-		$replace[] = $Axes_axesSize;
-		
-		$pov_contents = str_replace($find, $replace, $pov_contents);
-		
-		//attempt to write it to file
-		if (!file_put_contents($this->file_pov, $pov_contents)) {
-			chdir ($currentDir);
-			ob_end_clean();
-			return $this->error('Problem writing to file '.$this->file_pov);
+		$povContents = $this->generatePov($tplVars);
+		if (empty($povContents)) {
+			// Error generating contents
+			return $this->error('Problem generating contents.');
 		}
+
+		//attempt to write it to file
+		$file = $this->Render3d->file() . '.pov';
+		if (!file_put_contents($file, $povContents)) {
+			return $this->error('Problem writing to file.'.$this->file_pov);
+		}
+		if (!strlen(file_get_contents($file))) {
+			return $this->error('File contents empty!  Pov file failed.');
+		}
+		$this->Render3d->fileType('pov');
+		return true;
 	}
 
-	protected function error($msg) {
-		echo $msg;
+	/**
+	 * Generate the POV file contents
+	 * 
+	 * @param array $tplVars
+	 * @return string The POV contents to use
+	 */
+	protected function generatePov($tplVars) {
+		$options = $this->Render3d->convertParams('StlPov');
+
+		$defaultLayoutFile = $this->Render3d->sceneDir() . 'Pov/layout.php';
+
+		$layoutTemplate = (empty($options['PovLayoutTemplate']))? $defaultLayoutFile : $options['PovLayoutTemplate'];
+
+		// Extract the tpl vars so make it easier to use them in the template
+		extract($tplVars);
+
+		ob_start();
+
+		require $layoutTemplate;
+
+		return ob_get_clean();
 	}
 
 	protected function parseCords ($matches) {
@@ -167,5 +172,9 @@ class Step2Pov extends ConvertAbstract {
 		//NOTE: we are just using this as way to parse the contents...  after
 		//it is done, value doesn't matter...
 		return '';
+	}
+	
+	protected function error($msg) {
+		echo $msg;
 	}
 }

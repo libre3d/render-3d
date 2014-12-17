@@ -4,14 +4,14 @@ namespace Libre3d\Test\Render3d\Convert;
 
 use \Libre3d\Render3d\Render3d,
 	\Libre3d\Render3d\Convert\StlPov,
-	\org\bovigo\vfs\vfsStream;
+	\Libre3d\Test\Render3d\Render3dTestCase;
 
-class StlPovTest extends \PHPUnit_Framework_TestCase {
+class StlPovTest extends Render3dTestCase {
 	public function testConvertOneStep() {
 		$render3d = $this->getMock('\Libre3d\Render3d\Render3d', ['cmd']);
 
-		$render3d->workingDir(vfsStream::url('root/working/'));
-		$render3d->file('filename');
+		$render3d->workingDir($this->workingDir);
+		$render3d->file('example');
 		$render3d->fileType('stl');
 
 		// Mock up some steps
@@ -19,9 +19,6 @@ class StlPovTest extends \PHPUnit_Framework_TestCase {
 
 		$stl->expects($this->once())
 			->method('convert');
-
-		$inc = $this->getMock('\Libre3d\Render3d\Convert\ConvertAbstract', ['convert'], [$render3d]);
-		
 
 		$converter = $this->getMock('\Libre3d\Render3d\Convert\StlPov', ['getStep'], [$render3d]);
 
@@ -36,8 +33,8 @@ class StlPovTest extends \PHPUnit_Framework_TestCase {
 	public function testSecondStep() {
 		$render3d = $this->getMock('\Libre3d\Render3d\Render3d', ['cmd']);
 
-		$render3d->workingDir(vfsStream::url('root/working/'));
-		$render3d->file('filename');
+		$render3d->workingDir($this->workingDir);
+		$render3d->file('example');
 		$render3d->fileType('pov-inc');
 
 		// Mock up some steps
@@ -59,8 +56,8 @@ class StlPovTest extends \PHPUnit_Framework_TestCase {
 	public function testAllSteps() {
 		$render3d = $this->getMock('\Libre3d\Render3d\Render3d', ['cmd']);
 
-		$render3d->workingDir(vfsStream::url('root/working/'));
-		$render3d->file('filename');
+		$render3d->workingDir($this->workingDir);
+		$render3d->file('example');
 		$render3d->fileType('stl');
 
 		// Mock up some steps
