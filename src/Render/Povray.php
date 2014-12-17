@@ -41,7 +41,7 @@ class Povray extends Render {
 			$cmd .= " +L{$opts['PovLibraryIncDir']}";
 		}
 
-		$this->cmd($cmd);
+		$this->Render3d->cmd($cmd);
 		if (!file_exists($opts['PovOutFile'])) {
 			return false;
 		}
