@@ -130,9 +130,9 @@ class Render3dTest extends Render3dTestCase {
 	}
 
 	public function testOptions() {
-		$this->assertEmpty($this->render3d->options());
+		$defaultOptions = $this->render3d->options();
 
 		$this->render3d->options(['param1' => 'val1']);
-		$this->assertSame(['param1'=>'val1'], $this->render3d->options());
+		$this->assertSame(array_merge($defaultOptions, ['param1'=>'val1']), $this->render3d->options());
 	}
 }

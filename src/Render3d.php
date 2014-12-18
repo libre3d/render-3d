@@ -4,6 +4,31 @@ namespace Libre3d\Render3d;
 
 class Render3d {
 	/**
+	 * Turn the buffer off, anything "output" will not be displayed and will not be buffered.
+	 * 
+	 * This is the default value if nothing is set for "buffer" in the options.
+	 * 
+	 * Set an option with the key of "buffer" and this as the value to take effect.
+	 */
+	const BUFFER_OFF = 'off';
+
+	/**
+	 * Does not buffer, lets any output echo straight to standard out.
+	 * 
+	 * Set an option with the key of "buffer" and this as the value to take effect.
+	 */
+	const BUFFER_STD_OUT = 'std_out';
+
+	/**
+	 * Turn buffering on so that you can get the contents of what would normally be output to the standard out.
+	 * 
+	 * Can then get the buffer contents using the method getBufferAndClean
+	 * 
+	 * Set an option with the key of "buffer" and this as the value to take effect.
+	 */
+	const BUFFER_ON = 'on';
+
+	/**
 	 * Array of Renderer objects.
 	 * 
 	 * @var arrat
@@ -73,7 +98,16 @@ class Render3d {
 	 * 
 	 * @var array
 	 */
-	protected $options = [];
+	protected $options = [
+		'buffer' => 'off'
+	];
+
+	/**
+	 * Buffer
+	 * 
+	 * @var string
+	 */
+	protected $buffer = '';
 
 	/**
 	 * Constructor gonna construct
@@ -223,6 +257,7 @@ class Render3d {
 		if (!empty($options)) {
 			$this->options($options);
 		}
+		$this->startBuffer();
 
 		$currentDir = getcwd();
 		
@@ -230,11 +265,11 @@ class Render3d {
 		chdir($this->workingDir);
 
 		$converter = $this->getConverter($this->fileType, $fileType);
-		$result = $converter->convert();
+		$converter->convert();
 		
 		// Now go back to the starting dir
 		chdir($currentDir);
-		return $result;
+		$this->stopBuffer();
 	}
 
 	/**
@@ -250,11 +285,12 @@ class Render3d {
 			// TODO: exception
 			return false;
 		}
-
 		// Set the options
 		if (!empty($options)) {
 			$this->options($options);
 		}
+		
+		$this->startBuffer();
 
 		$currentDir = getcwd();
 		
@@ -266,6 +302,8 @@ class Render3d {
 		
 		// Now go back to the starting dir
 		chdir($currentDir);
+
+		$this->stopBuffer();
 		return $result;
 	}
 
@@ -371,5 +409,56 @@ class Render3d {
 			$this->options = $options;
 		}
 		return $this->options;
+	}
+
+	/**
+	 * Get the buffer contents and clean the buffer, similar to ob_get_clean().
+	 * 
+	 * Note that this requires an "option" to be set with key of "buffer" and value of one of the applicable
+	 * BUFFER_ constants on this class.
+	 * 
+	 * @return string
+	 */
+	public function getBufferAndClean() {
+		$return = $this->buffer;
+		$this->buffer = '';
+		return $return;
+	}
+
+	/**
+	 * Start the buffer, according to option set for "buffer"
+	 * 
+	 * @return void
+	 */
+	protected function startBuffer() {
+		if ($this->options['buffer'] === static::BUFFER_STD_OUT) {
+			// Buffer set to "standard out" so do not actually buffer anything, let it echo out
+			return;
+		}
+		ob_start();
+	}
+
+	/**
+	 * Stop the buffer and do what is needed, according to option set for "buffer"
+	 * 
+	 * @return void
+	 */
+	protected function stopBuffer() {
+		switch ($this->options['buffer']) {
+			case static::BUFFER_ON:
+				$this->buffer .= "\n" . ob_get_clean();
+				break;
+
+			case static::BUFFER_STD_OUT:
+				// Just in case things "started" with buffer on...
+				ob_end_flush();
+				break;
+
+			case static::BUFFER_OFF:
+				// Fall through to default
+			default:
+				ob_end_clean();
+				break;
+		}
 	}
 }
