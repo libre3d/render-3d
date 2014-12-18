@@ -21,18 +21,13 @@ class ScadStl extends Convert {
 		$this->Render3d->cmd($cmd);
 		
 		if (!file_exists($file_stl)) {
-			return $this->error("Error creating STL file from SCAD!  Cannot proceed.");
+			throw new \Exception("Error creating STL file from SCAD!  Cannot proceed.");
 		}
 		$stl_contents = file_get_contents($file_stl);
 		if (!strlen($stl_contents)) {
-			return $this->error("Contents of STL file are empty...");
+			throw new \Exception("Contents of STL file are empty, convert failed.");
 		}
 		// Success!  Update the file type
 		$this->Render3d->fileType('stl');
-	}
-
-	public function error($msg) {
-		// @todo: throw exception
-		echo $msg;
 	}
 }

@@ -80,13 +80,6 @@ class Render3d {
 	protected $fileType;
 
 	/**
-	 * Array of messages.  (TODO: Not yet used)
-	 * 
-	 * @var string
-	 */
-	protected $messages;
-
-	/**
 	 * The directory mask to use when creating new directories
 	 * 
 	 * @var integer
@@ -157,6 +150,7 @@ class Render3d {
 	 * @param string $filename If set, will try to set file and filetype accordingly, and possibly copy the file into
 	 *   the working directory.
 	 * @return string The current filename, relative to the working directory
+	 * @throws \Exception
 	 */
 	public function filename($filename = null) {
 		if (!empty($filename)) {
@@ -164,13 +158,11 @@ class Render3d {
 			if (!empty($pathInfo['dirname']) && $pathInfo['dirname'] !== '.' && file_exists($filename)) {
 				if (empty($this->workingDir)) {
 					// Set the working dir based on the file path
-					// TODO: Error
 					throw new \Exception('Working directory required.');
 				}
 				// Copy it into the working folder
 				$copyResult = copy($filename, $this->workingDir . $pathInfo['basename']);
 				if (!$copyResult) {
-					// TODO: Error
 					throw new \Exception('Copying file to working directory failed.');
 				}
 			}
@@ -245,12 +237,12 @@ class Render3d {
 	 * @param string $fileType The "end" file type to convert to.
 	 * @param array $options Array of options for the specific conversion
 	 * @return void
+	 * @throws \Exception
 	 */
 	public function convertTo ($fileType, $options = null) {
 		if (empty($this->fileType) || empty($this->workingDir)) {
 			// File type or working dir not set
-			// TODO: exception
-			return false;
+			throw new \Exception('Filetype and working dir are not set.');
 		}
 
 		// Set the options
@@ -265,7 +257,13 @@ class Render3d {
 		chdir($this->workingDir);
 
 		$converter = $this->getConverter($this->fileType, $fileType);
-		$converter->convert();
+		try {
+			$converter->convert();
+		} catch (\Exception $e) {
+			chdir($currentDir);
+			$this->stopBuffer();
+			throw $e;
+		}
 		
 		// Now go back to the starting dir
 		chdir($currentDir);
@@ -277,13 +275,13 @@ class Render3d {
 	 * 
 	 * @param string $engine
 	 * @param array $options
-	 * @return string|boolean Full path to rendered image file, or false if any problems happen.
+	 * @return string Full path to rendered image file
+	 * @throws \Exception
 	 */
 	public function render ($engine = 'povray', $options = null) {
 		if (empty($this->fileType) || empty($this->workingDir)) {
 			// File type or working dir not set
-			// TODO: exception
-			return false;
+			throw new \Exception('Filetype and Workingdir must be set first.');
 		}
 		// Set the options
 		if (!empty($options)) {
@@ -298,7 +296,13 @@ class Render3d {
 		chdir($this->workingDir);
 
 		$renderer = $this->getRenderer($engine);
-		$result = $renderer->render();
+		try {
+			$result = $renderer->render();
+		} catch (\Exception $e) {
+			chdir($currentDir);
+			$this->stopBuffer();
+			throw $e;
+		}
 		
 		// Now go back to the starting dir
 		chdir($currentDir);
@@ -339,22 +343,22 @@ class Render3d {
 	/**
 	 * Register a new converter object, possibly over-writing any previously set converters for the given from and to.
 	 * 
-	 * TODO: update phpdocs
-	 * 
-	 * @param string|object $class
+	 * @param string|Libre3d\Render3d\Convert\Convert $class
 	 * @param string $fromType
 	 * @param string $toType
 	 * @return void
+	 * @throws \Exception
 	 */
 	public function registerConverter($class, $fromType, $toType) {
-		// TODO: Make sure class implements the converter
 		if (is_string($class)) {
 			if (!class_exists($class)) {
-				// TODO: exception
+				throw new \Exception('Class ('.$class.') does not exist.');
 			}
 			$class = new $class($this);
 		}
-		// TODO: enforce class extending convert
+		if (!is_subclass_of($class, '\Libre3d\Render3d\Convert\Convert')) {
+			throw new \Exception('Must be a sub-class of type Libre3d\Render3d\Convert\Convert.');
+		}
 		$this->converters[$fromType][$toType] = $class;
 	}
 
@@ -368,11 +372,13 @@ class Render3d {
 	public function registerRenderer($class, $engine) {
 		if (is_string($class)) {
 			if (!class_exists($class)) {
-				// TODO: exception
+				throw new \Exception('Class ('.$class.') does not exist.');
 			}
 			$class = new $class($this);
 		}
-		// TODO: enforce class extending render
+		if (!is_subclass_of($class, '\Libre3d\Render3d\Render\Render')) {
+			throw new \Exception('Must be a sub-class of type Libre3d\Render3d\Render\Render.');
+		}
 		$this->renderers[$engine] = $class;
 	}
 
@@ -388,8 +394,7 @@ class Render3d {
 		
 		$errContents = trim(file_get_contents("{$this->workingDir}last_error.txt"));
 		if (strlen($errContents)) {
-			//print it red so it's noticed
-			// @TODO: don't echo, possibly add to messages or something
+			//print it red so it's noticed...  Note that this is wrapped in a buffer
 			echo "<span style='color: red;'>$errContents</span>\n";
 		}
 		return $result;

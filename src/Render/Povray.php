@@ -8,8 +8,7 @@ class Povray extends Render {
 		$this->preConvert();
 
 		if ($this->Render3d->fileType() !== 'pov') {
-			// @todo exception
-			return;
+			throw new \Exception('Invalid file type, cannot render this file.');
 		}
 
 		$defaults = [
@@ -43,9 +42,8 @@ class Povray extends Render {
 
 		$this->Render3d->cmd($cmd);
 		if (!file_exists($opts['PovOutFile'])) {
-			return false;
+			throw new \Exception('Something went wrong when rendering.');
 		}
-
 	}
 
 	protected function preConvert () {

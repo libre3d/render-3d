@@ -6,25 +6,18 @@ use Libre3d\Render3d\Render3d,
 	Libre3d\Render3d\Convert\Convert;
 
 class Step2Pov extends Convert {
-	/**
-	 * TODO: refactor
-	 * @var boolean
-	 */
-	protected $silent = false;
-
 	protected $min = [];
 
 	protected $max = [];
 
 	public function convert() {
 		if ($this->Render3d->fileType() !== 'pov-inc') {
-			// TODO: Throw exception?
-			return;
+			throw new \Exception('Wrong file type, cannot convert using this converter.');
 		}
 
 		$inc_contents = file_get_contents($this->Render3d->filename());
 		if (!strlen($inc_contents)) {
-			return $this->error("Contents of INC file are empty...");
+			throw new \Exception("Contents of INC file are empty, convert failed.");
 		}
 		//need to figure out the model name, which will be in the generated inc file...
 		preg_match('/#declare ([^ ]+)/', $inc_contents, $matches);
@@ -32,7 +25,7 @@ class Step2Pov extends Convert {
 
 		$cleanName = trim(preg_replace('/[^_a-zA-Z0-9]+/','_',$modelname), '_');
 		if (empty($modelname) || empty($cleanName)) {
-			return $this->error("Error retrieving model name...  Matches: ".print_r($matches,1));
+			throw new \Exception("Error retrieving model name, possibly invalid file.");
 		}
 
 		if ($modelname !== $cleanName) {
@@ -111,19 +104,18 @@ class Step2Pov extends Convert {
 		$povContents = $this->generatePov($tplVars);
 		if (empty($povContents)) {
 			// Error generating contents
-			return $this->error('Problem generating contents.');
+			throw new \Exception('Problem generating contents.');
 		}
 
 		//attempt to write it to file
 		$file = $this->Render3d->file() . '.pov';
 		if (!file_put_contents($file, $povContents)) {
-			return $this->error('Problem writing to file.'.$this->file_pov);
+			throw new \Exception('Problem writing to file.');
 		}
 		if (!strlen(file_get_contents($file))) {
-			return $this->error('File contents empty!  Pov file failed.');
+			throw new \Exception('File contents empty!  Pov file failed.');
 		}
 		$this->Render3d->fileType('pov');
-		return true;
 	}
 
 	/**
@@ -172,9 +164,5 @@ class Step2Pov extends Convert {
 		//NOTE: we are just using this as way to parse the contents...  after
 		//it is done, value doesn't matter...
 		return '';
-	}
-	
-	protected function error($msg) {
-		echo $msg;
 	}
 }
