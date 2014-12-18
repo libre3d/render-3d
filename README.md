@@ -3,10 +3,6 @@ render-3d
 
 Wrapper library to help render common 3d file formats.
 
-This is currently just an early preview.  I will be updating as time permits.
-
-This is still in a very **volatile state**, I still have a **lot of cleanup** to do.  Namespaces, classes, method names are likely to change.  Once it is cleaned up enough to re-use in some kind of semi-stable state, I will officially make a 0.1 version release.
-
 Requirements
 ============
 
@@ -20,8 +16,11 @@ This requires a few things to work.
 Installation
 ============
 
-  - Download the library by cloning the repo.  NOTE:  Once the library is no longer "in progress" it will be available by adding to composer.json of your project.
-  - Run `composer install` from inside the library's base folder.
+If you are using composer, just add `"libre3d/render-3d": "~1.0.0"` to the `require` section, then run `composer update`.
+
+Or if you do not use composer, clone this repository.  Then [get composer](http://getcomposer.com).  Then run
+`composer install` from the root folder of this library to install dependencies.
+
 
 Usage
 =====
@@ -29,46 +28,61 @@ Usage
 If you don't already have the composer vendor autoload PHP file included in your project, you will need to include it like:
 
 ```php
-require 'vendor/autoload.php';
+require 'render-3d/vendor/autoload.php';
 ```
 
-That will need to be adjusted to require the `autoload.php` file from the vendor directory.
+That path may need to be adjusted.
 
-Then you will need to initialize the Render3d object and let it know the locations of a few things:
+Then you will need to initialize the Render3d object and let it know the locations of a few things (note that this is
+a quick example, there are many options and different ways that files can be rendered using this library):
 
 ```php
 
 $render3d = new \Libre3d\Render3d\Render3d();
 
+// this is the working directory, where it will put any files used during the render process, as well as the final
+// rendered image.
 $render3d->workingDir('/path/to/working/folder/');
+
+// Set paths to the executables on this system
 $render3d->executable('stl2pov', '/path/to/stl2pov');
 $render3d->executable('openscad', '/path/to/openscad');
 $render3d->executable('povray', '/path/to/povray');
 
-// Shortcut: this will copy in your starting file into the working DIR if you give the full path to the starting file.
-// This will also set the fileType for you.
-$render3d->filename('/path/to/starting/stlfile.stl');
+try {
+	// This will copy in your starting file into the working DIR if you give the full path to the starting file.
+	// This will also set the fileType for you.
+	$render3d->filename('/path/to/starting/stlfile.stl');
 
-// Render!  This is another shortcut, it will do all the necessary conversions as long as the render engine (in this
-// case, the default engine, PovRAY) "knows" how to convert the file into a file it can use for rendering.  note that
-// if needed, you can do a single step of the process.  For instance, usage on [libre3d.com](http://libre3d.com) only
-// does the first step, converting to pov file "on the fly", then adds to a queue to do the rest of the rendering using
-// a cron job.  This is because some of the steps can take a long time depending on the complexity of the object.
-$renderedImagePath = $render3d->render('povray');
+	// Render!  This will do all the necessary conversions as long as the render engine (in this
+	// case, the default engine, PovRAY) "knows" how to convert the file into a file it can use for rendering.
+	// Note that this is a multi-step process that can be further broken down if you need it to.
+	$renderedImagePath = $render3d->render('povray');
 
-if ($renderedImagePath) {
 	echo "Render successful!  Rendered image will be at $renderedImagePath";
-} else {
-	// NOTE: We're still cleaning up what happens when there is a problem, so how you debug will likely change
-	// At the moment, it echos debug output.  That will be changing.
-	echo "Some problem occured.";
+} catch (\Exception $e) {
+	echo "Render failed :( Exception: ".$e->getMessage();
 }
 ```
 
 The main workflow:
 ==================
 
-  * Convert/export to STL file format (if not starting with an STL file)
+  * Convert to STL file format (if not starting with an STL file)
   * Convert the STL to a POVRay file format using the `stl2pov` library.
   * Render an image using povray and a common scene template.
+
+Options
+=======
+
+The `$Render3d->render()` method takes an optional second parameter for `$options`, which is an array of options.  You
+can also set the options before hand calling `$Render3d->options(['option1' => 'val1']);`
+
+Here are a few options of note:
+  * **buffer**  This controls what is done with output from the commands run on the command line.  The valid values are:
+    * `Render3d::BUFFER_OFF` - Default value.  Nothing is displayed and nothing is buffered.
+    * `Render3d::BUFFER_ON` - Buffers the output, and saves so that you can later retrieve it with `$Render3d->getBufferAndClean()`
+    * `Render3d::BUFFER_STD_OUT` - Sends any output directly to std out (sends to the browser or console)
+  * **width** - The width of the rendered image, in pixels.  Defaults to 1600
+  * **height** - The height of the rendered image, in pixels.  Defaults to 1200
 
