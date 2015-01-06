@@ -3,6 +3,15 @@
 namespace Libre3d\Render3d\Render;
 
 class Povray extends Render {
+	/**
+	 * Renders the current file.
+	 * 
+	 * If render successful, this method should update the Render3d's fileType to match the new file type for the rendered
+	 * file.
+	 * 
+	 * @return string Return the full path to the rendered image, or boolean false if there are any problems
+	 * @throws \Exception throws exception if there are problems rendering the image
+	 */
 	public function render() {
 		// Allow "chaned" actions so can just call render and this does all the conversion necessary
 		$this->preConvert();
@@ -44,6 +53,7 @@ class Povray extends Render {
 		if (!file_exists($opts['PovOutFile'])) {
 			throw new \Exception('Something went wrong when rendering.');
 		}
+		return $opts['PovOutFile'];
 	}
 
 	protected function preConvert () {

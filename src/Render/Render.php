@@ -26,10 +26,12 @@ abstract class Render {
 	/**
 	 * Renders the current file.
 	 * 
-	 * If render successful, this method should update the Render3d's fileType to match the new file type for the rendered
-	 * file.
+	 * This can do some automated file conversions by calling convertTo() to get the file type in the accepted format
+	 * for this rendering.  This is the only time fileType should change (if changed by a convert), the fileType should
+	 * not be changed to match the rendered image's file type.
 	 * 
-	 * @return string|boolean Return the full path to the rendered image, or boolean false if there are any problems
+	 * @return string The full path to the rendered image
+	 * @throws \Exception throws exception if there are problems rendering the image
 	 */
 	abstract public function render();
 }
