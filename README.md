@@ -89,8 +89,7 @@ Here are a few options of note:
 Version & Changelog
 ===================
 
-We adhere to the [Semantic Versioning Specification (SemVer)](http://semver.org/).  If we ever introduce breaking changes
-into a minor or patch release, please let us know!
+We adhere to the [Semantic Versioning Specification (SemVer)](http://semver.org/).
 
 **Changelog:**  We use Github issues and milestones to keep track of changes from version to version.  To see what changes were in a
 specific version, look at the closed issues for the corresponding milestone.
