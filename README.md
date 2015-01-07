@@ -86,3 +86,11 @@ Here are a few options of note:
   * **width** - The width of the rendered image, in pixels.  Defaults to 1600
   * **height** - The height of the rendered image, in pixels.  Defaults to 1200
 
+Version & Changelog
+===================
+
+We adhere to the [Semantic Versioning Specification (SemVer)](http://semver.org/).  If we ever introduce breaking changes
+into a minor or patch release, please let us know!
+
+**Changelog:**  We use Github issues and milestones to keep track of changes from version to version.  To see what changes were in a
+specific version, look at the closed issues for the corresponding milestone.
