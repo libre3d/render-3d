@@ -123,3 +123,5 @@ be in a scale of 10, like 10 mm, 10cm, etc. depending on how large the model is.
 
 And as it says in the requirements above, it relies on the [stl2pov python script](http://rsmith.home.xs4all.nl/software/stltools.html).
 Unlike other parts, this one seems to still be an active project.  We may port functionality into PHP if we can do so efficiently.
+All of the extra manipulation that we do on top of what the library does (for instance, to center the item properly at the correct
+elevation) is already done completely in PHP.
