@@ -107,7 +107,7 @@ You can find the original files still (as of the last time I checked) at http://
 overall file that does everything.
 
 We took the "idea" of how the shell script did things, and ported it into a PHP library that made system calls.  The
-look of the rendered images was lacking, so the schene's template file was almost completely changed.  We found that
+look of the rendered images was lacking, so the scene's template file was almost completely changed.  We found that
 POVRay has a lot of potential behind it if you take the time to learn how to set up the scene and do a little math to
 figure out the best camera angle and such.
 
