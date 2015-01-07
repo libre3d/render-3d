@@ -8,7 +8,7 @@ Requirements
 
 This requires a few things to work.
 
-  * The stl2pov python script, part of [stltools](http://rsmith.home.xs4all.nl/software/stltools.html)
+  * The stl2pov python script v2.4.4 (Future version will be compatible with v3.2 [stltools](http://rsmith.home.xs4all.nl/software/stltools.html))
   * For **Open SCAD** files:  Requires [Open SCAD](http://www.openscad.org/)
   * For the actual rendering, requires [POV Ray](http://www.povray.org/)
   * [Composer](https://getcomposer.org/)
