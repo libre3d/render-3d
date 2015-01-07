@@ -99,7 +99,7 @@ Credit
 
 This library started out as a port of a bash script, though we mainly took the overall "how it works" and re-wrote most
 of the fine details.  The original page talking about it is no longer around, but luckily
-we found a cached version on (Wayback)[https://web.archive.org/web/20110312125335/http://www.robottrouble.com/2009/12/01/auto-rendering-stl-files-to-png/]
+we found a cached version on [Wayback](https://web.archive.org/web/20110312125335/http://www.robottrouble.com/2009/12/01/auto-rendering-stl-files-to-png/)
 
 You can find the original files still (as of the last time I checked) at http://diyhpl.us/~bryan/irc/stl2pov/ - the `render.sh` is the
 overall file that does everything.
