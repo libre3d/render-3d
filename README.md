@@ -93,3 +93,18 @@ We adhere to the [Semantic Versioning Specification (SemVer)](http://semver.org/
 
 **Changelog:**  We use Github issues and milestones to keep track of changes from version to version.  To see what changes were in a
 specific version, look at the closed issues for the corresponding milestone.
+
+Credit
+======
+
+This library started out as a port of a bash script, though we mainly took the overall "how it works" and re-wrote most
+of the fine details.  The original page talking about it is no longer around, but luckily
+we found a cached version on (Wayback)[https://web.archive.org/web/20110312125335/http://www.robottrouble.com/2009/12/01/auto-rendering-stl-files-to-png/]
+
+You can find the original files still (as of the last time I checked) at http://diyhpl.us/~bryan/irc/stl2pov/ - the `render.sh` is the
+overall file that does everything.
+
+We took the "idea" of how the shell script did things, and ported it into a PHP library that made system calls.  The
+look of the rendered images was lacking, so the schene's template file was almost completely changed.  We found that
+POVRay has a lot of potential behind it if you take the time to learn how to set up the scene and do a little math to
+figure out the best camera angle and such.
