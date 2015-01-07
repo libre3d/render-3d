@@ -97,6 +97,8 @@ specific version, look at the closed issues for the corresponding milestone.
 Credit
 ======
 
+**Origin**
+
 This library started out as a port of a bash script, though we mainly took the overall "how it works" and re-wrote most
 of the fine details.  The original page talking about it is no longer around, but luckily
 we found a cached version on [Wayback](https://web.archive.org/web/20110312125335/http://www.robottrouble.com/2009/12/01/auto-rendering-stl-files-to-png/)
@@ -108,3 +110,16 @@ We took the "idea" of how the shell script did things, and ported it into a PHP 
 look of the rendered images was lacking, so the schene's template file was almost completely changed.  We found that
 POVRay has a lot of potential behind it if you take the time to learn how to set up the scene and do a little math to
 figure out the best camera angle and such.
+
+**src/Scenes/axes_macro.inc**
+
+Like the bash script, we also stuck to using the
+[AxesAndGridMacro](http://lib.povray.org/searchcollection/index2.php?objectName=AxesAndGridMacro&contributorTag=SharkD)
+to create a nice grid.  We didn't change the inc file but we drastically changed how it was used, it mainly just renders 
+a grid on the floor now.  We also made it change the grid size dynamically depending on the size of the model, it will always
+be in a scale of 10, like 10 mm, 10cm, etc. depending on how large the model is.
+
+**stl2pov**
+
+And as it says in the requirements above, it relies on the [stl2pov python script](http://rsmith.home.xs4all.nl/software/stltools.html).
+Unlike other parts, this one seems to still be an active project.  We may port functionality into PHP if we can do so efficiently.
