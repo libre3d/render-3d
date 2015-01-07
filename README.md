@@ -8,7 +8,7 @@ Requirements
 
 This requires a few things to work.
 
-  * The stl2pov python script v2.4.4 (Future version will be compatible with v3.2 [stltools](http://rsmith.home.xs4all.nl/software/stltools.html))
+  * **stl2pov v3.2.0+** python script, part of [stltools](http://rsmith.home.xs4all.nl/software/stltools.html))
   * For **Open SCAD** files:  Requires [Open SCAD](http://www.openscad.org/)
   * For the actual rendering, requires [POV Ray](http://www.povray.org/)
   * [Composer](https://getcomposer.org/)
@@ -16,7 +16,7 @@ This requires a few things to work.
 Installation
 ============
 
-If you are using composer, just add `"libre3d/render-3d": "~1.0.0"` to the `require` section, then run `composer update`.
+If you are using composer, just add `"libre3d/render-3d": "~1.1.0"` to the `require` section, then run `composer update`.
 
 Or if you do not use composer, clone this repository.  Then [get composer](http://getcomposer.com).  Then run
 `composer install` from the root folder of this library to install dependencies.

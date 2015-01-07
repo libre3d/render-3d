@@ -20,7 +20,7 @@ class Step2Pov extends Convert {
 			throw new \Exception("Contents of INC file are empty, convert failed.");
 		}
 		//need to figure out the model name, which will be in the generated inc file...
-		preg_match('/#declare ([^ ]+)/', $inc_contents, $matches);
+		preg_match('/# ?declare ([^ ]+)/', $inc_contents, $matches);
 		$modelname = $matches[1];
 
 		$cleanName = trim(preg_replace('/[^_a-zA-Z0-9]+/','_',$modelname), '_');

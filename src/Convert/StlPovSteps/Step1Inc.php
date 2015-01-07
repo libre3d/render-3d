@@ -14,9 +14,9 @@ class Step1Inc extends Convert {
 		
 		$stl2pov = $this->Render3d->executable('stl2pov');
 		$file = $this->Render3d->file();
-		
-		// NOTE: older version syntax.
-		$cmd = "{$stl2pov} -s \"{$file}.stl\" > \"{$file}.pov-inc\"";
+
+		// New syntax..  no way to specify the out file so just move it to what we expect
+		$cmd = "{$stl2pov} \"{$file}.stl\"; mv \"{$file}.inc\" \"{$file}.pov-inc\"";
 		
 		$this->Render3d->cmd($cmd);
 

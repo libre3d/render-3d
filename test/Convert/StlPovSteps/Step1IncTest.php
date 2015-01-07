@@ -16,7 +16,7 @@ class Step1IncTest extends Render3dTestCase {
 
 		$render3d->expects($this->once())
 			->method('cmd')
-			->with('stl2pov -s "example.stl" > "example.pov-inc"');
+			->with('stl2pov "example.stl"; mv "example.inc" "example.pov-inc"');
 
 		// Must mock up the file being created so that the convert process thinks it was successful
 		file_put_contents($this->workingDir . 'example.pov-inc', 'file contents');
