@@ -90,7 +90,7 @@ Test Coverage, Version & Changelog
 =================================
 
 [![Build Status](https://travis-ci.org/libre3d/render-3d.svg?branch=master)](https://travis-ci.org/libre3d/render-3d) 
-![codecov.io](https://codecov.io/github/libre3d/render-3d/coverage.svg?branch=master)](https://codecov.io/github/libre3d/render-3d?branch=master)
+[![codecov.io](https://codecov.io/github/libre3d/render-3d/coverage.svg?branch=master)](https://codecov.io/github/libre3d/render-3d?branch=master)
 
 We adhere to the [Semantic Versioning Specification (SemVer)](http://semver.org/).
 
