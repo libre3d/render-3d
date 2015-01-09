@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/libre3d/render-3d.svg?branch=master)](https://travis-ci.org/libre3d/render-3d) 
+[![codecov.io](https://codecov.io/github/libre3d/render-3d/coverage.svg?branch=master)](https://codecov.io/github/libre3d/render-3d?branch=master)
+
 render-3d
 =========
 
@@ -86,11 +89,8 @@ Here are a few options of note:
   * **width** - The width of the rendered image, in pixels.  Defaults to 1600
   * **height** - The height of the rendered image, in pixels.  Defaults to 1200
 
-Test Coverage, Version & Changelog
+Version & Changelog
 =================================
-
-[![Build Status](https://travis-ci.org/libre3d/render-3d.svg?branch=master)](https://travis-ci.org/libre3d/render-3d) 
-[![codecov.io](https://codecov.io/github/libre3d/render-3d/coverage.svg?branch=master)](https://codecov.io/github/libre3d/render-3d?branch=master)
 
 We adhere to the [Semantic Versioning Specification (SemVer)](http://semver.org/).
 
