@@ -3,6 +3,8 @@ php:
   - 5.5
   - 5.4
   - hhvm
+install:
+  - composer install
 before_install:
   sudo pip install codecov
 after_success:
