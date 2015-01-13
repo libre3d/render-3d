@@ -455,8 +455,7 @@ class Render3d {
 				break;
 
 			case static::BUFFER_STD_OUT:
-				// Just in case things "started" with buffer on...
-				ob_end_flush();
+				// Nothing to do, output sent directly to std out
 				break;
 
 			case static::BUFFER_OFF:
