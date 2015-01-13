@@ -53,6 +53,18 @@ class Render3dTest extends Render3dTestCase {
 		$this->assertEquals('scad', $this->render3d->fileType());
 	}
 
+	/**
+	 * Make sure it throws exception if filename called with full path and working DIR is not set
+	 * 
+	 * @return void
+	 * @expectedException \Exception
+	 * @expectedExceptionMessage Working directory required.
+	 */
+	public function testFilenameWorkingdirException() {
+		// Just call filename without calling workingDir first
+		$this->render3d->filename($this->testFilesDir.'example.scad');
+	}
+
 	public function testFile() {
 		// Without seeing anything, file should be empty
 		$this->assertEmpty($this->render3d->file());
@@ -127,6 +139,43 @@ class Render3dTest extends Render3dTestCase {
 		$this->render3d->workingDir('/tmp/testDir/');
 
 		$this->render3d->convertTo('to-type');
+	}
+
+	public function testCmdBuffer() {
+		$msg = 'AYB';
+		$this->render3d->workingDir($this->workingDir);
+		$this->render3d->filename('file.from');
+		
+		$converter = $this->getMock('\Libre3d\Render3d\Convert\Convert', ['convert'], [$this->render3d]);
+
+		$converter->expects($this->any())
+			->method('convert')
+			->will($this->returnCallback(function () use ($msg) {
+				$this->render3d->cmd('echo '.$msg);
+			}));
+
+		$this->render3d->registerConverter($converter, 'from', 'to');
+
+		// starting out, buffer should be empty
+		$this->assertEmpty($this->render3d->getBufferAndClean());
+
+		// default should have buffer off, so message should just go away
+		ob_start();
+		$this->render3d->convertTo('to');
+		$this->assertEmpty($this->render3d->getBufferAndClean());
+		$this->assertEmpty(ob_get_clean());
+
+		// it should echo out.  We'll catch it in our own buffer
+		ob_start();
+		$this->render3d->convertTo('to', ['buffer' => Render3d::BUFFER_STD_OUT]);
+		$this->assertEmpty($this->render3d->getBufferAndClean());
+		$this->assertSame($msg, trim(ob_get_clean()));
+
+		// it should be caught in the buffer
+		ob_start();
+		$this->render3d->convertTo('to', ['buffer' => Render3d::BUFFER_ON]);
+		$this->assertSame($msg, trim($this->render3d->getBufferAndClean()));
+		$this->assertEmpty(ob_get_clean());
 	}
 
 	public function testOptions() {
