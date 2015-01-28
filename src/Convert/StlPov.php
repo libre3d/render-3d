@@ -14,8 +14,12 @@ class StlPov extends Convert {
 			// already at the desired type, nothing more to do!
 			return;
 		}
-
-		$steps = $this->initSteps($singleStep);
+		if ($this->Render3d->executable('stl2pov') === 'native') {
+			// use ported native functionality
+			$steps = [$this->getStep('native')];
+		} else {
+			$steps = $this->initSteps($singleStep);
+		}
 		if (empty($steps)) {
 			return false;
 		}
@@ -51,6 +55,10 @@ class StlPov extends Convert {
 	 */
 	protected function getStep($fromType) {
 		switch($fromType) {
+			case 'native':
+				return new StlPovSteps\Step0Pov($this->Render3d);
+				break;
+
 			case 'stl':
 				return new StlPovSteps\Step1Inc($this->Render3d);
 				break;
