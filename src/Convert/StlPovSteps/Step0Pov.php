@@ -132,7 +132,7 @@ class Step0Pov extends Convert {
 			return false;
 		}
 		// <80sI
-		$parts = unpack("Z80name/I", $line);
+		$parts = unpack("a80name/I", $line);
 		$name = 'm_'.$this->cleanModelName($parts['name']);
 		unset($parts);
 
