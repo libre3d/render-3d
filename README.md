@@ -11,10 +11,11 @@ Requirements
 
 This requires a few things to work.
 
-  * **stl2pov v3.2.0+** python script, part of [stltools](http://rsmith.home.xs4all.nl/software/stltools.html))
   * For **Open SCAD** files:  Requires [Open SCAD](http://www.openscad.org/)
   * For the actual rendering, requires [POV Ray](http://www.povray.org/)
   * [Composer](https://getcomposer.org/)
+  * ~~**stl2pov v3.2.0+** python script, part of [stltools](http://rsmith.home.xs4all.nl/software/stltools.html))~~
+    * No longer required as of 1.2.0.  See issue #4 for details.
 
 Installation
 ============
@@ -48,7 +49,6 @@ $render3d = new \Libre3d\Render3d\Render3d();
 $render3d->workingDir('/path/to/working/folder/');
 
 // Set paths to the executables on this system
-$render3d->executable('stl2pov', '/path/to/stl2pov');
 $render3d->executable('openscad', '/path/to/openscad');
 $render3d->executable('povray', '/path/to/povray');
 
@@ -72,7 +72,7 @@ The main workflow:
 ==================
 
   * Convert to STL file format (if not starting with an STL file)
-  * Convert the STL to a POVRay file format using the `stl2pov` library.
+  * Convert the STL to a POVRay file format.
   * Render an image using povray and a common scene template.
 
 Options
@@ -124,7 +124,9 @@ be in a scale of 10, like 10 mm, 10cm, etc. depending on how large the model is.
 
 **stl2pov**
 
-And as it says in the requirements above, it relies on the [stl2pov python script](http://rsmith.home.xs4all.nl/software/stltools.html).
-This one is still an active project.  We may port functionality into PHP if we can do so efficiently.
-Note that all of the extra manipulation that we do on top of what the library does (for instance, to center the item
-properly at the correct elevation) is already done completely in PHP.
+Early versions relied on the [stl2pov python script](http://rsmith.home.xs4all.nl/software/stltools.html).  In version 1.2.0
+the conversion has been ported into this PHP script.
+
+We want to give a **special thanks** to the author of [stltools](http://rsmith.home.xs4all.nl/software/stltools.html), he
+has been a great help with our quest to port the functionality into PHP by answering our questions in-depth.  If you are
+looking for conversion tools that use Python, we highly recommend [stltools](http://rsmith.home.xs4all.nl/software/stltools.html).

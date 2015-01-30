@@ -7,94 +7,55 @@ use \Libre3d\Render3d\Render3d,
 	\Libre3d\Test\Render3d\Render3dTestCase;
 
 class StlPovTest extends Render3dTestCase {
-	public function testConvertOneStep() {
-		$render3d = $this->getMock('\Libre3d\Render3d\Render3d', ['cmd']);
+	public function testConvertBinary() {
+		// Note: This convert is entirely "in PHP" so go ahead and test out the full process without stubbing out cmd()
 
+		$render3d = new Render3d();
+		$name = 'example-binary';
 		$render3d->workingDir($this->workingDir);
-		$render3d->file('example');
-		$render3d->fileType('stl');
-		$render3d->options(['SingleStep' => true]);
-
-		// Mock up some steps
-		$stl = $this->getGenericConverter($render3d);
-
-		$stl->expects($this->once())
-			->method('convert');
-
-		$converter = $this->getMock('\Libre3d\Render3d\Convert\StlPov', ['getStep'], [$render3d]);
-
-		$converter->expects($this->once())
-			->method('getStep')
-			->with('stl')
-			->will($this->returnValue($stl));
-
-		$converter->convert();
-	}
-
-	public function testSecondStep() {
-		$render3d = $this->getMock('\Libre3d\Render3d\Render3d', ['cmd']);
-
-		$render3d->workingDir($this->workingDir);
-		$render3d->file('example');
-		$render3d->fileType('pov-inc');
-		$render3d->options(['SingleStep' => true]);
-
-		// Mock up some steps
-		$inc = $this->getGenericConverter($render3d);
-
-		$inc->expects($this->once())
-			->method('convert');
-
-		$converter = $this->getMock('\Libre3d\Render3d\Convert\StlPov', ['getStep'], [$render3d]);
-
-		$converter->expects($this->once())
-			->method('getStep')
-			->with('pov-inc')
-			->will($this->returnValue($inc));
-
-		$converter->convert();
-	}
-
-	public function testAllSteps() {
-		$render3d = $this->getMock('\Libre3d\Render3d\Render3d', ['cmd']);
-
-		$render3d->workingDir($this->workingDir);
-		$render3d->file('example');
+		$render3d->file($name);
 		$render3d->fileType('stl');
 
-		// Mock up some steps
-		$stl = $this->getGenericConverter($render3d);
+		copy($this->testFilesDir . $name . '.stl', $this->workingDir . $name . '.stl');
 
-		$stl->expects($this->once())
-			->method('convert');
+		$converter = new StlPov($render3d);
 
-		$inc = $this->getGenericConverter($render3d);
+		$currentDir = getcwd();
+		chdir($this->workingDir);
+
+		$converter->convert(true);
+
+		chdir($currentDir);
 		
-		$inc->expects($this->once())
-			->method('convert');
-
-		$converter = $this->getMock('\Libre3d\Render3d\Convert\StlPov', ['getStep'], [$render3d]);
-
-		$converter->expects($this->at(0))
-			->method('getStep')
-			->with('stl')
-			->will($this->returnValue($stl));
-
-		$converter->expects($this->at(1))
-			->method('getStep')
-			->with('pov-inc')
-			->will($this->returnValue($inc));
-
-		$converter->convert();
+		// Make sure it updated the file type when successful
+		$this->assertEquals('pov', $render3d->fileType(), 'Ensure that the file type was updated when convert successful');
+		$this->assertEquals($name, $render3d->file(), 'Ensure that the filename stayed the same for consistency');
+		$this->assertFileExists($this->workingDir . $name . '.pov', 'Ensure that the pov file was created');
 	}
 
-	/**
-	 * Get a generic converter with convert method mocked out
-	 * 
-	 * @param Libre3d\Render3d\Render3d $render3d
-	 * @return Libre3d\Render3d\Convert\Convert
-	 */
-	protected function getGenericConverter (Render3d $render3d) {
-		return $this->getMock('\Libre3d\Render3d\Convert\Convert', ['convert'], [$render3d]);
+	public function testConvertStr() {
+		// Note: This convert is entirely "in PHP" so go ahead and test out the full process without stubbing out cmd()
+
+		$render3d = new Render3d();
+		$name = 'example';
+		$render3d->workingDir($this->workingDir);
+		$render3d->file($name);
+		$render3d->fileType('stl');
+
+		copy($this->testFilesDir . $name . '.stl', $this->workingDir . $name . '.stl');
+
+		$converter = new StlPov($render3d);
+
+		$currentDir = getcwd();
+		chdir($this->workingDir);
+
+		$converter->convert(true);
+
+		chdir($currentDir);
+		
+		// Make sure it updated the file type when successful
+		$this->assertEquals('pov', $render3d->fileType(), 'Ensure that the file type was updated when convert successful');
+		$this->assertEquals($name, $render3d->file(), 'Ensure that the filename stayed the same for consistency');
+		$this->assertFileExists($this->workingDir . $name . '.pov', 'Ensure that the pov file was created');
 	}
 }
