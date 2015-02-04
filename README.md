@@ -20,7 +20,7 @@ This requires a few things to work.
 Installation
 ============
 
-If you are using composer, just add `"libre3d/render-3d": "~1.1.0"` to the `require` section, then run `composer update`.
+If you are using composer, just add `"libre3d/render-3d": "~1.2.0"` to the `require` section, then run `composer update`.
 
 Or if you do not use composer, clone this repository.  Then [get composer](http://getcomposer.com).  Then run
 `composer install` from the root folder of this library to install dependencies.
