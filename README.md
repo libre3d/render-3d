@@ -88,6 +88,7 @@ Here are a few options of note:
     * `Render3d::BUFFER_STD_OUT` - Sends any output directly to std out (sends to the browser or console)
   * **width** - The width of the rendered image, in pixels.  Defaults to 1600
   * **height** - The height of the rendered image, in pixels.  Defaults to 1200
+  * **fwrite_buffer_size** - integer - Buffer size in bytes, when writing the POV file (and possibly others).  Some systems may see better performance with a different buffer size other than the default.  Defaults to 8000 (set to 0 for no fwrite buffering)
 
 Version & Changelog
 =================================
