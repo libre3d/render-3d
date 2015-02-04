@@ -40,7 +40,12 @@ abstract class Convert {
 	 */
 	protected function fwriteBuffer($handle, $contents, $fn, $bufferSize = 8000) {
 		if (!isset($this->fwriteBuffers[$fn])) {
-			$this->fwriteBuffers[$fn] = '';
+			if (!$bufferSize) {
+				// just write directly to file
+				fwrite($handle, $contents);
+			} else {
+				$this->fwriteBuffers[$fn] = '';
+			}
 		}
 		$this->fwriteBuffers[$fn] .= $contents;
 		if (strlen($this->fwriteBuffers[$fn]) > $bufferSize) {
