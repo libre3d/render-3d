@@ -44,7 +44,8 @@ class Povray extends Render {
 		//+AMn	- use non-adaptive (n=1) or adaptive (n=2) supersampling
 		//+A0.n	- perform antialiasing (if color change is above n percent)
 		//+L	- Library include directory
-		$cmd = "{$opts['povray']} +I\"{$pov}\" +FN +W{$opts['width']} +H{$opts['height']} +O\"{$opts['PovOutFile']}\" +Q9 +AM2 +A0.5";
+		//-D	- Turn display off
+		$cmd = "{$opts['povray']} +I\"{$pov}\" +FN +W{$opts['width']} +H{$opts['height']} +O\"{$opts['PovOutFile']}\" +Q9 +AM2 +A0.5 -D";
 		if (!empty($opts['PovLibraryIncDir'])) {
 			$cmd .= " +L{$opts['PovLibraryIncDir']}";
 		}
